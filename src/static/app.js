@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let sharedActivityOpened = false;
 
   // Authentication state
   let currentUser = null;
@@ -499,12 +500,71 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.entries(filteredActivities).forEach(([name, details]) => {
       renderActivityCard(name, details);
     });
+
+    const sharedActivity = document.getElementById(window.location.hash.slice(1));
+    if (!sharedActivityOpened && sharedActivity && activitiesList.contains(sharedActivity)) {
+      sharedActivity.scrollIntoView({ block: "center" });
+      sharedActivityOpened = true;
+    }
+  }
+
+  // Share public activity details only, never participant information.
+  function addSharingControls(activityCard, name, details) {
+    const activityUrl = new URL(window.location.pathname, window.location.origin);
+    activityUrl.hash = activityCard.id;
+    const shareText = `${name} — ${details.description}\nSchedule: ${formatSchedule(details)}`;
+    const sharingControls = document.createElement("div");
+    sharingControls.className = "activity-sharing";
+    sharingControls.setAttribute("role", "group");
+    sharingControls.setAttribute("aria-label", `Share ${name}`);
+
+    const label = document.createElement("span");
+    label.textContent = "Share:";
+    sharingControls.appendChild(label);
+
+    const facebookUrl = new URL("https://www.facebook.com/sharer/sharer.php");
+    facebookUrl.searchParams.set("u", activityUrl.href);
+    const whatsappUrl = new URL("https://wa.me/");
+    whatsappUrl.searchParams.set("text", `${shareText}\n${activityUrl.href}`);
+
+    [["Facebook", facebookUrl], ["WhatsApp", whatsappUrl]].forEach(([platform, url]) => {
+      const link = document.createElement("a");
+      link.className = "share-control";
+      link.textContent = platform;
+      link.href = url.href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.setAttribute("aria-label", `Share ${name} on ${platform} (opens in a new tab)`);
+      sharingControls.appendChild(link);
+    });
+
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "share-control";
+    copyButton.textContent = "Copy Link";
+    copyButton.setAttribute("aria-label", `Copy link to ${name}`);
+    const status = document.createElement("span");
+    status.className = "share-status";
+    status.setAttribute("role", "status");
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(activityUrl.href);
+        status.textContent = "Link copied!";
+      } catch (error) {
+        window.prompt("Copy this activity link:", activityUrl.href);
+        status.textContent = "You can share this activity link with friends.";
+      }
+    });
+
+    sharingControls.append(copyButton, status);
+    activityCard.appendChild(sharingControls);
   }
 
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
+    activityCard.id = `activity-${encodeURIComponent(name)}`;
 
     // Calculate spots and capacity
     const totalSpots = details.max_participants;
@@ -616,6 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    addSharingControls(activityCard, name, details);
     activitiesList.appendChild(activityCard);
   }
 

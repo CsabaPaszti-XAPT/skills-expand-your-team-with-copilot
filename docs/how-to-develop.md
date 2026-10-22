@@ -39,6 +39,14 @@ These dependencies will be installed when you run `pip install -r src/requiremen
 
 ## Usage
 
+### Sharing activities
+
+Each activity has **Facebook**, **WhatsApp**, and **Copy Link** controls, available
+without signing in. Shared links open the activities page and scroll to the
+selected activity. Only public activity details are included, not student emails.
+If copying is unavailable or denied by the browser, a dialog lets users copy the
+link manually. Sharing works entirely in the browser and needs no extra setup.
+
 ### Running the application
 
 1. Install the dependencies:

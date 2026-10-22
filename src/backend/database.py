@@ -163,6 +163,16 @@ initial_activities = {
         },
         "max_participants": 16,
         "participants": ["william@mergington.edu", "jacob@mergington.edu"]
+    },
+    "Manga Maniacs": {
+        "description": "Power up your Tuesdays! Dive into epic adventures, unforgettable heroes, and the worlds of Japanese manga. Share your favorite series, discover new stories, and meet fellow fans—whether you're a seasoned reader or starting your next quest!",
+        "schedule": "Tuesdays at 7:00 PM",
+        "schedule_details": {
+            "days": ["Tuesday"],
+            "start_time": "19:00"
+        },
+        "max_participants": 15,
+        "participants": []
     }
 }
 
@@ -186,4 +196,3 @@ initial_teachers = [
         "role": "admin"
     }
 ]
-

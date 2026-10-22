@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let sharedActivityOpened = false;
 
   // Authentication state
   let currentUser = null;
@@ -476,8 +477,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const sharedActivity = document.getElementById(window.location.hash.slice(1));
-    if (sharedActivity && activitiesList.contains(sharedActivity)) {
+    if (!sharedActivityOpened && sharedActivity && activitiesList.contains(sharedActivity)) {
       sharedActivity.scrollIntoView({ block: "center" });
+      sharedActivityOpened = true;
     }
   }
 
